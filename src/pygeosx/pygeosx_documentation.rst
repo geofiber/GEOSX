@@ -119,7 +119,7 @@ Module Classes
 		Return a view of the wrapped value, or ``None`` if it cannot be exported to Python.
 
 		A breakdown of the possible return types:
-		
+
 		- Instance of a pylvarray class
 			If the wrapped type is one of the LvArray types that have a Python wrapper type.
 
