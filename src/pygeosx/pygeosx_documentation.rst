@@ -1,5 +1,5 @@
-GEOSX in Python
-=================
+:mod:`pygeosx` --- GEOSX in Python
+==================================
 GEOSX can be manipulated and executed through a Python script.
 
 High-level control of GEOSX is managed through the top-level ``pygeosx`` functions,
@@ -12,11 +12,130 @@ a ``Wrapper`` out of the data repository.
 	The ``pygeosx`` module provides plenty of opportunites to crash Python. 
 	See the Segmentation Faults section below.
 
+Only Python 3 is supported.
+
+Module Functions
+----------------
+
+.. py:function:: pygeosx.initialize(rank, args)
+
+	Initialize GEOSX for the first time, with a rank and command-line arguments.
+
+	This function should only be called **once**. To reinitialize, use the ``reinit`` function.
+
+	Generally the rank is obtained from the `mpi4py <https://mpi4py.readthedocs.io/en/stable/>`_ 
+	module and the arguments are obtained from ``sys.argv``.
+
+	Returns a ``Group`` representing the ``ProblemManager`` instance.
+
+.. py:function:: pygeosx.reinit(args)
+
+	Reinitialize GEOSX with a new set of command-line arguments.
+
+	Returns a ``Group`` representing the ``ProblemManager`` instance.
+
+.. py:function:: pygeosx.apply_initial_conditions()
+
+	Apply the initial conditions.
+
+.. py:function:: pygeosx.finalize()
+
+	Finalize GEOSX. After this no calls into pygeosx or to MPI are allowed.
+
+.. py:function:: pygeosx.run()
+
+	Enter the GEOSX event loop.
+
+	Runs until hitting a breakpoint defined in the input deck, or until the simulation
+	is complete.
+
+	Returns one of the state constants defined below.
+
+GEOSX State
+-----------
+
+.. py:data:: pygeosx.UNINITIALIZED
+
+.. py:data:: pygeosx.INITIALIZED
+
+.. py:data:: pygeosx.READY_TO_RUN
+
+	This state indicates that GEOSX still has time steps left to run.
+
+.. py:data:: pygeosx.COMPLETED
+
+	This state indicates that GEOSX has completed the current simulation.
+
 Module Classes
 --------------
 
-.. automodule:: pygeosx
-   :members:
+.. py:class:: pygeosx.Group
+
+	Python interface to geosx::dataRepository::Group.
+
+	Used to get access to other groups, and ultimately to get wrappers
+	and convert them into Python views of C++ objects.
+
+	.. py:method:: groups()
+
+		Return a list of the subgroups.
+
+	.. py:method:: wrappers()
+
+		Return a list of the wrappers.
+
+	.. py:method:: get_group(path)
+
+	.. py:method:: get_group(path, default)
+
+		Return the ``Group`` at the relative path ``path``; ``default`` is optional.
+		If no group exists and ``default`` is not given, raise a ``ValueError``;
+		otherwise return ``default``.
+
+	.. py:method:: get_wrapper(path)
+
+	.. py:method:: get_wrapper(path, default)
+
+		Return the ``Wrapper`` at the relative path ``path``; ``default`` is optional.
+		If no Wrapper exists and ``default`` is not given, raise a ``ValueError``;
+		otherwise return ``default``.
+
+	.. py:method:: register(callback)
+
+		Register a callback on the physics solver.
+
+		The callback should take two arguments: the CRSMatrix and the array.
+
+		Raise ``TypeError`` if the group is not the Physics solver.
+
+.. py:class:: pygeosx.Wrapper
+
+	Python interface to geosx::dataRepository::WrapperBase.
+
+	Wraps a generic C++ object. Use ``repr`` to get a description of the type.
+
+	.. py:method:: value()
+
+		Return a view of the wrapped value, or ``None`` if it cannot be exported to Python.
+
+		A breakdown of the possible return types:
+		
+		- Instance of a pylvarray class
+			If the wrapped type is one of the LvArray types that have a Python wrapper type.
+
+		- 1D numpy.ndarray
+			If the wrapped type is a numeric constant. The returned array is a shallow copy and
+			has a single entry.
+
+		- str
+			If the wrapped type is a std::string this returns a copy of the string.
+
+		- list of str
+			If the wrapped type is a `LvArray::Array< std::string, 1, ... >` or a `std::vector< std::string >`.
+			This is a copy.
+
+		- None
+			If the wrapped type is not covered by any of the above.
 
 
 Segmentation Faults

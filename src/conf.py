@@ -16,9 +16,6 @@ import os
 import sys
 import shutil
 
-# add path to pygeosx.so and pylvarray.so
-sys.path.insert(0, os.path.join(os.environ["PWD"], "lib"))
-
 # Call doxygen in ReadtheDocs
 read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 if read_the_docs_build:
@@ -102,8 +99,6 @@ extensions = [
 #    'sphinx.ext.mathjax'
     'sphinx.ext.imgmath',
     'sphinx.ext.todo',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.autodoc',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
