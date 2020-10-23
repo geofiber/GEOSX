@@ -7,8 +7,8 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 
 
-def print_and_flush(msg):
-    print("Rank {}: {}".format(rank, msg))
+def print_and_flush(msg, *args, **kwargs):
+    print("Rank {}: {}".format(rank, msg), *args, **kwargs)
     sys.stdout.flush()
 
 
