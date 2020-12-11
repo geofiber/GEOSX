@@ -32,6 +32,14 @@ namespace constitutive
 class ConstitutiveBase;
 }
 
+class ElementSubRegionBaseABC
+{
+public:
+  virtual localIndex const & numNodesPerElement() const  = 0;
+  virtual localIndex nCells() const = 0; // Business meaning
+  virtual std::vector< int > getVTKNodeOrdering() const = 0;
+};
+
 /**
  * @class ElementSubRegionBase
  * Abstract class for a collection of mesh elements that
@@ -39,7 +47,7 @@ class ConstitutiveBase;
  * face (fracture) elements, embedded surface (fracture)
  * elements, well elements, etc
  */
-class ElementSubRegionBase : public ObjectManagerBase
+class ElementSubRegionBase : public ObjectManagerBase, public ElementSubRegionBaseABC
 {
 public:
 
@@ -104,7 +112,7 @@ public:
    * @brief Get the number of nodes per element.
    * @return number of nodes per element
    */
-  localIndex const & numNodesPerElement() const { return m_numNodesPerElement; }
+  localIndex const & numNodesPerElement() const override { return m_numNodesPerElement; }
 
   /**
    * @brief Get the number of nodes per element.
@@ -242,7 +250,7 @@ public:
    * @brief Get the VTK ordering for this subregion.
    * @return the VTK node ordering
    */
-  std::vector< int > getVTKNodeOrdering() const;
+  std::vector< int > getVTKNodeOrdering() const override;
 
   ///@}
 

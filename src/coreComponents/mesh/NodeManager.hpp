@@ -34,6 +34,14 @@ class FaceManager;
 class EdgeManager;
 class ElementRegionManager;
 
+class NodeManagerABC
+{
+public:
+  virtual arrayView2d< real64 const, nodes::REFERENCE_POSITION_USD > referencePosition() const = 0;
+  virtual localIndex nPoints() const = 0; //  Business meaning. not sure...
+  virtual arrayView2d< real64 const, nodes::REFERENCE_POSITION_USD > embSurfNodesPosition() const = 0;
+  virtual std::list< dataRepository::WrapperBase > getWrappers() const = 0; // FIXME not the proper return type.
+};
 
 /**
  * @class NodeManager
@@ -44,7 +52,7 @@ class ElementRegionManager;
  * This means that each field is stored in an array where each array entry
  * corresponds to a node.
  */
-class NodeManager : public ObjectManagerBase
+class NodeManager : public ObjectManagerBase, public NodeManagerABC
 {
 public:
 
@@ -412,9 +420,19 @@ public:
    * @return an immutable arrayView of the reference position.
    */
 
-  arrayView2d< real64 const, nodes::REFERENCE_POSITION_USD > referencePosition() const
+  arrayView2d< real64 const, nodes::REFERENCE_POSITION_USD > referencePosition() const override
   { return m_referencePosition; }
   //END_SPHINX_REFPOS_ACCESS
+
+  localIndex nPoints() const override
+  {
+    return this->size();
+  }
+
+  std::list< dataRepository::WrapperBase > getWrappers() const override
+  {
+    GEOSX_ERROR("Not implemented!");
+  }
 
   /**
    * @brief Return the reference position array  of the nodes of the embedded surfaces.
@@ -427,7 +445,7 @@ public:
    * @brief Return an immutable arrayView of the position.
    * @return immutable arrayView of the location of the nodes of the embedded surfaces.
    */
-  arrayView2d< real64 const, nodes::REFERENCE_POSITION_USD > embSurfNodesPosition() const
+  arrayView2d< real64 const, nodes::REFERENCE_POSITION_USD > embSurfNodesPosition() const override
   { return m_embeddedSurfNodesPosition; }
 
   /**

@@ -30,20 +30,8 @@ if( ENABLE_MPI )
 endif() 
 
 if( ENABLE_VTK )
-  list( APPEND fileIO_headers
-               vtk/VTKPVDWriter.hpp
-               vtk/VTKVTMWriter.hpp
-               vtk/VTKGEOSXData.hpp
-               vtk/VTKPolyDataWriterInterface.hpp )
-
-  list( APPEND fileIO_sources
-               vtk/VTKGEOSXData.cpp
-               vtk/VTKPVDWriter.cpp
-               vtk/VTKVTMWriter.cpp
-               vtk/VTKPolyDataWriterInterface.cpp )
-
-
-  list( APPEND dependencyList vtk )
+  add_subdirectory( vtk )
+  set( dependencyList ${dependencyList} fileIO_vtk )
 endif()
 
 if( ENABLE_OPENMP )

@@ -22,11 +22,16 @@
 namespace geosx
 {
 
+class WellElementSubRegionABC: public ElementSubRegionBaseABC
+{
+public:
+};
+
 /**
  * @class WellElementSubRegion
  * @brief This class describes a collection of local well elements and perforations.
  */
-class WellElementSubRegion : public ElementSubRegionBase
+class WellElementSubRegion : public ElementSubRegionBase, public WellElementSubRegionABC
 {
 public:
 

@@ -28,13 +28,18 @@
 namespace geosx
 {
 
+class SurfaceElementSubRegionABC: public ElementSubRegionBaseABC
+{
+public:
+};
+
 /**
  * @class SurfaceElementSubRegion
  *
  * The SurfaceElementSubRegion class contains the functionality to support the concept of a
  * surface element that can be either and embedded surface element or a face element.
  */
-class SurfaceElementSubRegion : public ElementSubRegionBase
+class SurfaceElementSubRegion : public ElementSubRegionBase, public SurfaceElementSubRegionABC
 {
 public:
 
